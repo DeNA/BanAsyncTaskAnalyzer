@@ -19,43 +19,91 @@ namespace BanAsyncTaskAnalyzer.Test;
 [TestFixture]
 public class BanAsyncTaskAnalyzerTest
 {
-    /// <summary>
-    /// Test analyze for empty source code
-    /// </summary>
     [Test]
-    public async Task EmptySourceCode_NoDiagnosticReport()
+    public async Task NoAsyncMethod_ReportNoDiagnostic()
     {
-        const string Source = "";
         var analyzer = new BanAsyncTaskAnalyzer();
-        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, Source);
+        var source = ReadCodes("NoAsyncMethodCase.txt");
 
-        Assert.That(diagnostics, Is.Empty);
+        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source);
+        var actual = diagnostics
+            .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
+            .ToArray();
+
+        DiagnosticsAssert.IsEmpty(actual);
     }
 
-    /// <summary>
-    /// Test analyze for containing lowercase type name in source code
-    /// </summary>
     [Test]
-    public async Task TypeNameContainingLowercase_ReportOneDiagnostic()
+    public async Task asyncメソッド_戻り値がTask_BanAsyncTask0001がレポートされる()
     {
-        var source = ReadCodes("TypeNameContainingLowercase.cs");
         var analyzer = new BanAsyncTaskAnalyzer();
+        var testData = ReadCodes("UseTaskCase.txt");
+        var (source, expectedDiagnostics) =
+            TestDataParser.CreateSourceAndExpectedDiagnostic(testData[0]);
+
+        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source);
+
+        var actualDiagnostics = diagnostics
+            .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
+            .Where(x => x.Id != "CS8019") // Ignore "Unnecessary using directive"
+            .Where(x => x.Id !=
+                        "CS1998") // Ignore "This async method lacks 'await' operators and will run synchronously."
+            .ToArray();
+
+        DiagnosticsAssert.AreEqual(expectedDiagnostics, actualDiagnostics);
+    }
+
+    [Test]
+    public async Task asyncメソッド_戻り値がDummyTask_何もレポートされない()
+    {
+        var analyzer = new BanAsyncTaskAnalyzer();
+        var source = ReadCodes("UseDummyTaskCase.txt", "Fakes.cs");
         var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source);
 
         var actual = diagnostics
             .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
-            .Where(x => x.Id != "CS8019") // Ignore "Unnecessary using directive"
+            .Where(x => x.Id !=
+                        "CS1998") // Ignore "This async method lacks 'await' operators and will run synchronously".
             .ToArray();
 
-        Assert.That(actual, Has.Length.EqualTo(1));
-        Assert.That(actual.First().Id, Is.EqualTo("BanAsyncTaskAnalyzer0001"));
-        Assert.That(actual.First().GetMessage(), Is.EqualTo("Type name 'TypeName' contains lowercase letters"));
+        DiagnosticsAssert.IsEmpty(actual);
+    }
 
-        LocationAssert.HaveTheSpan(
-            new LinePosition(12, 10),
-            new LinePosition(12, 18),
-            actual.First().Location
-        );
+    [Test]
+    public async Task AsyncMethodReturnUniTask_ReportOneDiagnostic()
+    {
+        var analyzer = new BanAsyncTaskAnalyzer();
+        var testData = ReadCodes("UseUniTaskCase.txt", "Fakes.cs");
+        var (source, _) = TestDataParser.CreateSourceAndExpectedDiagnostic(testData[0]);
+        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source, testData[1]);
+
+        var actual = diagnostics
+            .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
+            .Where(x => x.Id != "CS8019") // Ignore "Unnecessary using directive"
+            .Where(x => x.Id !=
+                        "CS1998") // Ignore "This async method lacks 'await' operators and will run synchronously."
+            .ToArray();
+
+        DiagnosticsAssert.IsEmpty(actual);
+    }
+
+    [Test]
+    public async Task asyncメソッド_戻り値がvoid_BanAsyncTask0002がレポートされる()
+    {
+        var analyzer = new BanAsyncTaskAnalyzer();
+        var testData = ReadCodes("AsyncVoidCase.txt");
+        var (source, expectedDiagnostics) = TestDataParser.CreateSourceAndExpectedDiagnostic(testData[0]);
+
+        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source);
+
+        var actualDiagnostics = diagnostics
+            .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
+            .Where(x => x.Id != "CS8019") // Ignore "Unnecessary using directive"
+            .Where(x => x.Id !=
+                        "CS1998") // Ignore "This async method lacks 'await' operators and will run synchronously."
+            .ToArray();
+
+        DiagnosticsAssert.AreEqual(expectedDiagnostics, actualDiagnostics);
     }
 
     private static string[] ReadCodes(params string[] sources)

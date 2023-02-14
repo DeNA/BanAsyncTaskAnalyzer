@@ -1,0 +1,9 @@
+using NotSystem.Threading.Tasks;
+
+class C
+{
+    async Task UseDummyTask()
+    {
+       
+    }
+}

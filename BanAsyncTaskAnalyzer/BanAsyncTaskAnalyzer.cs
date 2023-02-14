@@ -3,6 +3,7 @@
 
 using System.Collections.Immutable;
 using System.Linq;
+using BanAsyncTaskAnalyzer.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -11,40 +12,51 @@ namespace BanAsyncTaskAnalyzer;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class BanAsyncTaskAnalyzer : DiagnosticAnalyzer
 {
-    internal const string DiagnosticId = "BanAsyncTaskAnalyzer0001";
-
-    private static readonly DiagnosticDescriptor s_rule = new DiagnosticDescriptor(
-        id: DiagnosticId,
-        title: "Type name contains lowercase letters",
-        messageFormat: "Type name '{0}' contains lowercase letters",
+    private static readonly DiagnosticDescriptor Rule01 = new DiagnosticDescriptor(
+        id: "BanAsyncTask0001",
+        title: "Banned Task Rule",
+        messageFormat: "Do not use '{0}', Should use UniTask",
         category: "Naming",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Type names should be all uppercase.");
 
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_rule);
+    private static readonly DiagnosticDescriptor Rule02 = new DiagnosticDescriptor(
+        id: "BanAsyncTask0002",
+        title: "Banned void in async Method",
+        messageFormat: "Do not use '{0}' in async Method, Should use UniTaskVoid",
+        category: "BanAsyncTaskAnalyzer",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true
+    );
+
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule01, Rule02);
 
     public override void Initialize(AnalysisContext context)
     {
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
-
-        // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
-        // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-        context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+        context.RegisterSymbolAction(AnalyzeAsyncMethod, SymbolKind.Method);
     }
 
-    private static void AnalyzeSymbol(SymbolAnalysisContext context)
+    private static void AnalyzeAsyncMethod(SymbolAnalysisContext context)
     {
-        // TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
-        var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-
-        // Find just those named type symbols with names containing lowercase letters.
-        if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
+        var methodSymbol = (IMethodSymbol)context.Symbol;
+        if (!methodSymbol.IsAsync)
         {
-            // For all such symbols, produce a diagnostic.
-            var diagnostic = Diagnostic.Create(s_rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
+            return;
+        }
 
+        if (methodSymbol.ReturnType.FullName() == "System.Threading.Tasks.Task")
+        {
+            var diagnostic = Diagnostic.Create(Rule01, methodSymbol.Locations[0], methodSymbol.ReturnType);
+            context.ReportDiagnostic(diagnostic);
+            return;
+        }
+
+        if (methodSymbol.ReturnType.FullName() == "System.Void")
+        {
+            var diagnostic = Diagnostic.Create(Rule02, methodSymbol.Locations[0], methodSymbol.ReturnType);
             context.ReportDiagnostic(diagnostic);
         }
     }

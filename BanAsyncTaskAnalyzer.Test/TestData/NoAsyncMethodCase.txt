@@ -1,0 +1,6 @@
+class NoAsyncMethodCase
+{
+   void NoAsyncMethod()
+   {
+   }
+}

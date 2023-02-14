@@ -1,0 +1,9 @@
+using System.Threading;
+using System.Threading.Tasks;
+
+class C
+{
+    async Task {|UseTask|BanAsyncTask0001|Do not use 'System.Threading.Tasks.Task', Should use UniTask|}()
+    {
+    }
+}
