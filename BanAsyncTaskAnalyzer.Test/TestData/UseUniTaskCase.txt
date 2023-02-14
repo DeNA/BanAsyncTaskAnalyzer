@@ -1,0 +1,8 @@
+using Cysharp.Threading.Tasks;
+
+class C
+{
+    async UniTask UseUniTask()
+    {
+    }
+}

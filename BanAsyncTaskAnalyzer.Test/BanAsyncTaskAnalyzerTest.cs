@@ -69,6 +69,24 @@ public class BanAsyncTaskAnalyzerTest
         DiagnosticsAssert.IsEmpty(actual);
     }
 
+    [Test]
+    public async Task AsyncMethodReturnUniTask_ReportOneDiagnostic()
+    {
+        var analyzer = new BanAsyncTaskAnalyzer();
+        var testData = ReadCodes("UseUniTaskCase.txt", "Fakes.cs");
+        var (source, _) = TestDataParser.CreateSourceAndExpectedDiagnostic(testData[0]);
+        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source, testData[1]);
+        
+        var actual = diagnostics
+            .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
+            .Where(x => x.Id != "CS8019") // Ignore "Unnecessary using directive"
+            .Where(x => x.Id !=
+                        "CS1998") // Ignore "This async method lacks 'await' operators and will run synchronously."
+            .ToArray();
+
+        DiagnosticsAssert.IsEmpty(actual);
+    }
+
     private static string[] ReadCodes(params string[] sources)
     {
         const string Path = "../../../TestData";
