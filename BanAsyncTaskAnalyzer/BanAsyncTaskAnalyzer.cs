@@ -6,12 +6,12 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace RoslynAnalyzerTemplate;
+namespace BanAsyncTaskAnalyzer;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class RoslynAnalyzerTemplate : DiagnosticAnalyzer
+public class BanAsyncTaskAnalyzer : DiagnosticAnalyzer
 {
-    internal const string DiagnosticId = "RoslynAnalyzerTemplate0001";
+    internal const string DiagnosticId = "BanAsyncTaskAnalyzer0001";
 
     private static readonly DiagnosticDescriptor s_rule = new DiagnosticDescriptor(
         id: DiagnosticId,

@@ -5,4 +5,4 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-RoslynAnalyzerTemplate0001 | Naming   | Warning  | Sample
+BanAsyncTaskAnalyzer0001 | Naming   | Warning  | Sample

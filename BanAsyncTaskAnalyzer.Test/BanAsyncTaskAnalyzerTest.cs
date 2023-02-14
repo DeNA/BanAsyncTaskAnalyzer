@@ -10,14 +10,14 @@ using Microsoft.CodeAnalysis.Text;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
 
-namespace RoslynAnalyzerTemplate.Test;
+namespace BanAsyncTaskAnalyzer.Test;
 
 /// <summary>
 /// This test is an examples of using the Dena.CodeAnalysis.Testing test helper library.
 /// <see href="https://github.com/DeNA/Dena.CodeAnalysis.Testing"/>
 /// </summary>
 [TestFixture]
-public class RoslynAnalyzerTemplateTest
+public class BanAsyncTaskAnalyzerTest
 {
     /// <summary>
     /// Test analyze for empty source code
@@ -26,7 +26,7 @@ public class RoslynAnalyzerTemplateTest
     public async Task EmptySourceCode_NoDiagnosticReport()
     {
         const string Source = "";
-        var analyzer = new RoslynAnalyzerTemplate();
+        var analyzer = new BanAsyncTaskAnalyzer();
         var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, Source);
 
         Assert.That(diagnostics, Is.Empty);
@@ -39,7 +39,7 @@ public class RoslynAnalyzerTemplateTest
     public async Task TypeNameContainingLowercase_ReportOneDiagnostic()
     {
         var source = ReadCodes("TypeNameContainingLowercase.cs");
-        var analyzer = new RoslynAnalyzerTemplate();
+        var analyzer = new BanAsyncTaskAnalyzer();
         var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source);
 
         var actual = diagnostics
@@ -48,7 +48,7 @@ public class RoslynAnalyzerTemplateTest
             .ToArray();
 
         Assert.That(actual, Has.Length.EqualTo(1));
-        Assert.That(actual.First().Id, Is.EqualTo("RoslynAnalyzerTemplate0001"));
+        Assert.That(actual.First().Id, Is.EqualTo("BanAsyncTaskAnalyzer0001"));
         Assert.That(actual.First().GetMessage(), Is.EqualTo("Type name 'TypeName' contains lowercase letters"));
 
         LocationAssert.HaveTheSpan(

@@ -13,14 +13,14 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
 
-namespace RoslynAnalyzerTemplate
+namespace BanAsyncTaskAnalyzer
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RoslynAnalyzerTemplateCodeFixProvider)), Shared]
-    public class RoslynAnalyzerTemplateCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(BanAsyncTaskAnalyzerCodeFixProvider)), Shared]
+    public class BanAsyncTaskAnalyzerCodeFixProvider : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
-            get { return ImmutableArray.Create(RoslynAnalyzerTemplate.DiagnosticId); }
+            get { return ImmutableArray.Create(BanAsyncTaskAnalyzer.DiagnosticId); }
         }
 
         public sealed override FixAllProvider GetFixAllProvider()

@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Verify = Microsoft.CodeAnalysis.CSharp.Testing.NUnit.CodeFixVerifier<
-    RoslynAnalyzerTemplate.RoslynAnalyzerTemplate,
-    RoslynAnalyzerTemplate.RoslynAnalyzerTemplateCodeFixProvider>;
+    BanAsyncTaskAnalyzer.BanAsyncTaskAnalyzer,
+    BanAsyncTaskAnalyzer.BanAsyncTaskAnalyzerCodeFixProvider>;
 
-namespace RoslynAnalyzerTemplate.Test;
+namespace BanAsyncTaskAnalyzer.Test;
 
 [TestFixture]
-public class RoslynAnalyzerTemplateCodeFixProviderTest
+public class BanAsyncTaskAnalyzerCodeFixProviderTest
 {
     /// <summary>
     /// Test codefix provider for lowercase type name make uppercase
