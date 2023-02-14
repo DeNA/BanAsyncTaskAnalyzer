@@ -3,6 +3,7 @@
 
 using System.Collections.Immutable;
 using System.Linq;
+using BanAsyncTaskAnalyzer.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -37,7 +38,7 @@ public class BanAsyncTaskAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        if (methodSymbol.ReturnType.Name == "Task")
+        if (methodSymbol.ReturnType.FullName() == "System.Threading.Tasks.Task")
         {
             var diagnostic = Diagnostic.Create(Rule01, methodSymbol.Locations[0], methodSymbol.ReturnType);
             context.ReportDiagnostic(diagnostic);
