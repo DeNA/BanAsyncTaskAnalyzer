@@ -19,45 +19,6 @@ namespace BanAsyncTaskAnalyzer.Test;
 [TestFixture]
 public class BanAsyncTaskAnalyzerTest
 {
-    /// <summary>
-    /// Test analyze for empty source code
-    /// </summary>
-    [Test]
-    public async Task EmptySourceCode_NoDiagnosticReport()
-    {
-        const string Source = "";
-        var analyzer = new BanAsyncTaskAnalyzer();
-        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, Source);
-
-        Assert.That(diagnostics, Is.Empty);
-    }
-
-    /// <summary>
-    /// Test analyze for containing lowercase type name in source code
-    /// </summary>
-    [Test]
-    public async Task TypeNameContainingLowercase_ReportOneDiagnostic()
-    {
-        var source = ReadCodes("TypeNameContainingLowercase.cs");
-        var analyzer = new BanAsyncTaskAnalyzer();
-        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source);
-
-        var actual = diagnostics
-            .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
-            .Where(x => x.Id != "CS8019") // Ignore "Unnecessary using directive"
-            .ToArray();
-
-        Assert.That(actual, Has.Length.EqualTo(1));
-        Assert.That(actual.First().Id, Is.EqualTo("BanAsyncTaskAnalyzer0001"));
-        Assert.That(actual.First().GetMessage(), Is.EqualTo("Type name 'TypeName' contains lowercase letters"));
-
-        LocationAssert.HaveTheSpan(
-            new LinePosition(12, 10),
-            new LinePosition(12, 18),
-            actual.First().Location
-        );
-    }
-
     private static string[] ReadCodes(params string[] sources)
     {
         const string Path = "../../../TestData";
