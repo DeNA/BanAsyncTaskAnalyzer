@@ -21,7 +21,16 @@ public class BanAsyncTaskAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true,
         description: "Type names should be all uppercase.");
 
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule01);
+    private static readonly DiagnosticDescriptor Rule02 = new DiagnosticDescriptor(
+        id: "BanAsyncTask0002",
+        title: "Banned void in async Method",
+        messageFormat: "Do not use '{0}' in async Method, Should use UniTaskVoid",
+        category: "BanAsyncTaskAnalyzer",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true
+    );
+
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule01, Rule02);
 
     public override void Initialize(AnalysisContext context)
     {
@@ -41,6 +50,13 @@ public class BanAsyncTaskAnalyzer : DiagnosticAnalyzer
         if (methodSymbol.ReturnType.FullName() == "System.Threading.Tasks.Task")
         {
             var diagnostic = Diagnostic.Create(Rule01, methodSymbol.Locations[0], methodSymbol.ReturnType);
+            context.ReportDiagnostic(diagnostic);
+            return;
+        }
+
+        if (methodSymbol.ReturnType.FullName() == "System.Void")
+        {
+            var diagnostic = Diagnostic.Create(Rule02, methodSymbol.Locations[0], methodSymbol.ReturnType);
             context.ReportDiagnostic(diagnostic);
         }
     }
