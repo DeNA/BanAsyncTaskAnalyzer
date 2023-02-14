@@ -1,0 +1,10 @@
+using System.Threading;
+using System.Threading.Tasks;
+
+class C
+{
+    async void {|UseAsyncVoid|BanAsyncTask0002|Do not use 'void' in async Method, Should use UniTaskVoid|}()
+    {
+        await Task.Delay(100);
+    }
+}

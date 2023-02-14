@@ -76,7 +76,7 @@ public class BanAsyncTaskAnalyzerTest
         var testData = ReadCodes("UseUniTaskCase.txt", "Fakes.cs");
         var (source, _) = TestDataParser.CreateSourceAndExpectedDiagnostic(testData[0]);
         var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source, testData[1]);
-        
+
         var actual = diagnostics
             .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
             .Where(x => x.Id != "CS8019") // Ignore "Unnecessary using directive"
@@ -85,6 +85,25 @@ public class BanAsyncTaskAnalyzerTest
             .ToArray();
 
         DiagnosticsAssert.IsEmpty(actual);
+    }
+
+    [Test]
+    public async Task asyncメソッド_戻り値がvoid_BanAsyncTask0002がレポートされる()
+    {
+        var analyzer = new BanAsyncTaskAnalyzer();
+        var testData = ReadCodes("AsyncVoidCase.txt");
+        var (source, expectedDiagnostics) = TestDataParser.CreateSourceAndExpectedDiagnostic(testData[0]);
+
+        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source);
+
+        var actualDiagnostics = diagnostics
+            .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
+            .Where(x => x.Id != "CS8019") // Ignore "Unnecessary using directive"
+            .Where(x => x.Id !=
+                        "CS1998") // Ignore "This async method lacks 'await' operators and will run synchronously."
+            .ToArray();
+
+        DiagnosticsAssert.AreEqual(expectedDiagnostics, actualDiagnostics);
     }
 
     private static string[] ReadCodes(params string[] sources)
