@@ -19,6 +19,20 @@ namespace BanAsyncTaskAnalyzer.Test;
 [TestFixture]
 public class BanAsyncTaskAnalyzerTest
 {
+    [Test]
+    public async Task NoAsyncMethod_ReportNoDiagnostic()
+    {
+        var analyzer = new BanAsyncTaskAnalyzer();
+        var source = ReadCodes("NoAsyncMethodCase.txt");
+
+        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source);
+        var actual = diagnostics
+            .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
+            .ToArray();
+
+        DiagnosticsAssert.IsEmpty(actual);
+    }
+
     private static string[] ReadCodes(params string[] sources)
     {
         const string Path = "../../../TestData";
