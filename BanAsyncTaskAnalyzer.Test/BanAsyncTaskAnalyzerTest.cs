@@ -53,6 +53,22 @@ public class BanAsyncTaskAnalyzerTest
         DiagnosticsAssert.AreEqual(expectedDiagnostics, actualDiagnostics);
     }
 
+    [Test]
+    public async Task asyncメソッド_戻り値がDummyTask_何もレポートされない()
+    {
+        var analyzer = new BanAsyncTaskAnalyzer();
+        var source = ReadCodes("UseDummyTaskCase.txt", "Fakes.cs");
+        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source);
+
+        var actual = diagnostics
+            .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
+            .Where(x => x.Id !=
+                        "CS1998") // Ignore "This async method lacks 'await' operators and will run synchronously".
+            .ToArray();
+
+        DiagnosticsAssert.IsEmpty(actual);
+    }
+
     private static string[] ReadCodes(params string[] sources)
     {
         const string Path = "../../../TestData";
