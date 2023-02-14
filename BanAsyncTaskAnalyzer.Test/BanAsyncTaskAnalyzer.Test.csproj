@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -20,7 +20,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="JunitXml.TestLogger" Version="3.0.114"/>
-    <PackageReference Include="Dena.CodeAnalysis.Testing" Version="3.0.0"/>
+    <PackageReference Include="Dena.CodeAnalysis.Testing" Version="3.0.2"/>
   </ItemGroup>
 
   <ItemGroup>
