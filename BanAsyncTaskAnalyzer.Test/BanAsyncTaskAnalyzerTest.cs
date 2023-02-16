@@ -6,9 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dena.CodeAnalysis.CSharp.Testing;
-using Microsoft.CodeAnalysis.Text;
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
 
 namespace BanAsyncTaskAnalyzer.Test;
 

@@ -2,7 +2,6 @@
 // This software is released under the MIT License.
 
 using System.Collections.Immutable;
-using System.Linq;
 using BanAsyncTaskAnalyzer.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
