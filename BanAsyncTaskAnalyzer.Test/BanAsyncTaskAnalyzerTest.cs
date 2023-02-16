@@ -20,7 +20,7 @@ namespace BanAsyncTaskAnalyzer.Test;
 public class BanAsyncTaskAnalyzerTest
 {
     [Test]
-    public async Task NoAsyncMethod_ReportNoDiagnostic()
+    public async Task 非asyncメソッド_戻り値がvoid_何もレポートされない()
     {
         var analyzer = new BanAsyncTaskAnalyzer();
         var source = ReadCodes("NoAsyncMethodCase.txt");
@@ -70,7 +70,7 @@ public class BanAsyncTaskAnalyzerTest
     }
 
     [Test]
-    public async Task AsyncMethodReturnUniTask_ReportOneDiagnostic()
+    public async Task asyncメソッド_戻り値がUniTask_何もレポートされない()
     {
         var analyzer = new BanAsyncTaskAnalyzer();
         var source = ReadCodes("UseUniTaskCase.txt", "Fakes.cs");
