@@ -60,11 +60,6 @@ Build and create NuGet package.
 $ dotnet build
 ```
 
----
-Analyzer based on the [Roslyn Analyzer Template][template].
-
-[template]: https://github.com/D/RoslynAnalyzerTemplate
-
 ## Reference
 
 - [UniTask](https://github.com/Cysharp/UniTask.git)
