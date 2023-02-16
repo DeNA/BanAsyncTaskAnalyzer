@@ -6,9 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dena.CodeAnalysis.CSharp.Testing;
-using Microsoft.CodeAnalysis.Text;
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
 
 namespace BanAsyncTaskAnalyzer.Test;
 
@@ -20,7 +18,7 @@ namespace BanAsyncTaskAnalyzer.Test;
 public class BanAsyncTaskAnalyzerTest
 {
     [Test]
-    public async Task NoAsyncMethod_ReportNoDiagnostic()
+    public async Task 非asyncメソッド_戻り値がvoid_何もレポートされない()
     {
         var analyzer = new BanAsyncTaskAnalyzer();
         var source = ReadCodes("NoAsyncMethodCase.txt");
@@ -70,12 +68,11 @@ public class BanAsyncTaskAnalyzerTest
     }
 
     [Test]
-    public async Task AsyncMethodReturnUniTask_ReportOneDiagnostic()
+    public async Task asyncメソッド_戻り値がUniTask_何もレポートされない()
     {
         var analyzer = new BanAsyncTaskAnalyzer();
-        var testData = ReadCodes("UseUniTaskCase.txt", "Fakes.cs");
-        var (source, _) = TestDataParser.CreateSourceAndExpectedDiagnostic(testData[0]);
-        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source, testData[1]);
+        var source = ReadCodes("UseUniTaskCase.txt", "Fakes.cs");
+        var diagnostics = await DiagnosticAnalyzerRunner.Run(analyzer, source);
 
         var actual = diagnostics
             .Where(x => x.Id != "CS1591") // Ignore "Missing XML comment for publicly visible type or member"
